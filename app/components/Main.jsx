@@ -6,10 +6,9 @@ let Main = (props) => {
     <div>
       <Navigation />
       <div className="row">
-        <h3>Main.jsx rendered</h3>
-        <div>
-          {props.children}
-        </div>
+      <div>
+        {props.children}
+      </div>
       </div>
     </div>
   );
