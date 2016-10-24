@@ -27395,6 +27395,10 @@
 	
 	var _CountdownForm2 = _interopRequireDefault(_CountdownForm);
 	
+	var _Controls = __webpack_require__(254);
+	
+	var _Controls2 = _interopRequireDefault(_Controls);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var Countdown = _react2.default.createClass({
@@ -27410,6 +27414,12 @@
 	      switch (this.state.countdownStatus) {
 	        case 'started':
 	          this.startTimer();
+	          break;
+	        case 'stopped':
+	          this.setState({ count: 0 });
+	        case 'paused':
+	          clearInterval(this.timer);
+	          this.timer = undefined;
 	          break;
 	      }
 	    }
@@ -27428,14 +27438,28 @@
 	      countdownStatus: 'started'
 	    });
 	  },
+	  handleStatusChange: function handleStatusChange(newStatus) {
+	    this.setState({ countdownStatus: newStatus });
+	  },
 	  render: function render() {
-	    var count = this.state.count;
+	    var _this2 = this;
 	
+	    var _state = this.state;
+	    var count = _state.count;
+	    var countdownStatus = _state.countdownStatus;
+	
+	    var renderControlArea = function renderControlArea() {
+	      if (countdownStatus !== 'stopped') {
+	        return _react2.default.createElement(_Controls2.default, { countdownStatus: countdownStatus, onStatusChange: _this2.handleStatusChange });
+	      } else {
+	        return _react2.default.createElement(_CountdownForm2.default, { onSetCountdown: _this2.handleSetCountdown });
+	      }
+	    };
 	    return _react2.default.createElement(
 	      'div',
 	      null,
 	      _react2.default.createElement(_Clock2.default, { totalSeconds: count }),
-	      _react2.default.createElement(_CountdownForm2.default, { onSetCountdown: this.handleSetCountdown })
+	      renderControlArea()
 	    );
 	  }
 	});
@@ -27825,7 +27849,7 @@
 	
 	
 	// module
-	exports.push([module.id, ".top-bar, .top-bar ul {\n  background-color: #333333; }\n\n.top-bar .menu-text {\n  color: white; }\n\n.top-bar .menu > .menu-text > a {\n  display: inline;\n  padding: 0; }\n\n.top-bar .active-link {\n  font-weight: bold; }\n\n.clock {\n  align-items: center;\n  background-color: #bfd0e2;\n  border: 2px solid #2099e8;\n  border-radius: 50%;\n  display: flex;\n  height: 14rem;\n  width: 14rem;\n  justify-content: center;\n  margin: 4rem auto; }\n\n.clock-text {\n  color: white;\n  font-size: 2.25rem;\n  font-weight: 300; }\n", ""]);
+	exports.push([module.id, ".top-bar, .top-bar ul {\n  background-color: #333333; }\n\n.top-bar .menu-text {\n  color: white; }\n\n.top-bar .menu > .menu-text > a {\n  display: inline;\n  padding: 0; }\n\n.top-bar .active-link {\n  font-weight: bold; }\n\n.clock {\n  align-items: center;\n  background-color: #bfd0e2;\n  border: 2px solid #2099e8;\n  border-radius: 50%;\n  display: flex;\n  height: 14rem;\n  width: 14rem;\n  justify-content: center;\n  margin: 4rem auto; }\n\n.clock-text {\n  color: white;\n  font-size: 2.25rem;\n  font-weight: 300; }\n\n.controls {\n  display: flex;\n  justify-content: center; }\n\n.button {\n  padding: .75rem 3rem; }\n\n.button:first-child {\n  margin-right: 1.5rem; }\n", ""]);
 	
 	// exports
 
@@ -27875,6 +27899,72 @@
 	});
 	
 	exports.default = CountdownForm;
+
+/***/ },
+/* 254 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(8);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Controls = _react2.default.createClass({
+	  displayName: 'Controls',
+	
+	  propTypes: {
+	    countdownStatus: _react2.default.PropTypes.string.isRequired,
+	    onStatusChange: _react2.default.PropTypes.func.isRequired
+	  },
+	  onStatusChange: function onStatusChange(newStatus) {
+	    var _this = this;
+	
+	    return function () {
+	      _this.props.onStatusChange(newStatus);
+	    };
+	  },
+	  render: function render() {
+	    var _this2 = this;
+	
+	    var countdownStatus = this.props.countdownStatus;
+	
+	    var renderStartStopButton = function renderStartStopButton() {
+	      if (countdownStatus === 'started') {
+	        return _react2.default.createElement(
+	          'button',
+	          { className: 'button secondary', onClick: _this2.onStatusChange('paused') },
+	          'Pause'
+	        );
+	      } else if (countdownStatus == 'paused') {
+	        return _react2.default.createElement(
+	          'button',
+	          { className: 'button primary', onClick: _this2.onStatusChange('started') },
+	          'Start'
+	        );
+	      }
+	    };
+	
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'controls' },
+	      renderStartStopButton(),
+	      _react2.default.createElement(
+	        'button',
+	        { className: 'button alert hollow', onClick: this.onStatusChange('stopped') },
+	        'Clear'
+	      )
+	    );
+	  }
+	});
+	
+	exports.default = Controls;
 
 /***/ }
 /******/ ]);
