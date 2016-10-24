@@ -7,7 +7,6 @@ let Timer = React.createClass({
     return (
       <div>
         <h3 className="text-center">Timer</h3>
-        <Clock />
       </div>
     );
   }
