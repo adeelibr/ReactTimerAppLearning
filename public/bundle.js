@@ -27301,19 +27301,88 @@
 	
 	var _Clock2 = _interopRequireDefault(_Clock);
 	
+	var _TimerForm = __webpack_require__(255);
+	
+	var _TimerForm2 = _interopRequireDefault(_TimerForm);
+	
+	var _Controls = __webpack_require__(254);
+	
+	var _Controls2 = _interopRequireDefault(_Controls);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var Timer = _react2.default.createClass({
 	  displayName: 'Timer',
+	  getInitialState: function getInitialState() {
+	    return {
+	      countdownStatus: 'stopped',
+	      count: 0
+	    };
+	  },
+	  componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+	    if (this.state.countdownStatus !== prevState.countdownStatus) {
+	      switch (this.state.countdownStatus) {
+	        case 'started':
+	          this.startTimer();
+	          break;
+	        case 'stopped':
+	          this.setState({ count: 0 });
+	        case 'paused':
+	          clearInterval(this.timer);
+	          this.timer = undefined;
+	          break;
+	      }
+	    }
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    clearInterval(this.timer);
+	    this.timer = undefined;
+	  },
+	  startTimer: function startTimer() {
+	    var _this = this;
+	
+	    this.timer = setInterval(function () {
+	      var newCount = _this.state.count + 1;
+	      _this.setState({ count: newCount });
+	
+	      if (newCount === 0) {
+	        _this.setState({ countdownStatus: 'stopped' });
+	      }
+	    }, 1000);
+	  },
+	  handleSetCountdown: function handleSetCountdown(seconds) {
+	    this.setState({
+	      count: seconds,
+	      countdownStatus: 'started'
+	    });
+	  },
+	  handleStatusChange: function handleStatusChange(newStatus) {
+	    this.setState({ countdownStatus: newStatus });
+	  },
 	  render: function render() {
+	    var _this2 = this;
+	
+	    var _state = this.state;
+	    var count = _state.count;
+	    var countdownStatus = _state.countdownStatus;
+	
+	    var renderControlArea = function renderControlArea() {
+	      if (countdownStatus !== 'stopped') {
+	        return _react2.default.createElement(_Controls2.default, { countdownStatus: countdownStatus, onStatusChange: _this2.handleStatusChange });
+	      } else {
+	        return _react2.default.createElement(_TimerForm2.default, { onSetCountdown: _this2.handleSetCountdown });
+	      }
+	    };
 	    return _react2.default.createElement(
 	      'div',
 	      null,
 	      _react2.default.createElement(
-	        'h3',
-	        { className: 'text-center' },
-	        'Timer'
-	      )
+	        'h1',
+	        { className: 'page-title' },
+	        'Timer App'
+	      ),
+	      _react2.default.createElement(_Clock2.default, { totalSeconds: count }),
+	      renderControlArea()
 	    );
 	  }
 	});
@@ -27978,6 +28047,47 @@
 	});
 	
 	exports.default = Controls;
+
+/***/ },
+/* 255 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(8);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var TimerForm = _react2.default.createClass({
+	  displayName: "TimerForm",
+	  onSubmit: function onSubmit(e) {
+	    e.preventDefault();
+	    this.props.onSetCountdown(parseInt(0, 10));
+	  },
+	  render: function render() {
+	    return _react2.default.createElement(
+	      "div",
+	      null,
+	      _react2.default.createElement(
+	        "form",
+	        { ref: "form", onSubmit: this.onSubmit, className: "countdown-form" },
+	        _react2.default.createElement(
+	          "button",
+	          { type: "submit", className: "button expanded" },
+	          "Start"
+	        )
+	      )
+	    );
+	  }
+	});
+	
+	exports.default = TimerForm;
 
 /***/ }
 /******/ ]);
